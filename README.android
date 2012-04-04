@@ -1,0 +1,28 @@
+
+# Create Android project (type your names here)
+mkdir talk-android-devel
+android create project -n libjingle \
+	--target 9 \
+	-p talk-android-devel \
+	-a talk \
+	-k com.google.libjingle.example
+#
+# Create jni directory
+cd libjingle-dmon-devel
+mkdir jni
+cd jni
+#
+# Fetch core libjingle source
+git clone -b android git@github.com:dmonakhov/libjingle.git
+#
+# Add makefiles for jni root dir
+ln -s libjingle/android/jni-Android.mk Android.mk
+ln -s libjingle/android/jni-Application.mk Application.mk
+
+# Fetch third party libraryes and apply patches
+cd libjingle/talk/third_party
+bash +x fetch_sources.sh
+cd ../../../
+
+# Ok, finally try to build native code
+ndk-build -j16

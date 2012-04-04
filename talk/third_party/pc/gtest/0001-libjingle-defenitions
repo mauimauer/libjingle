@@ -1,0 +1,23 @@
+diff --git a/src/Android.mk b/src/Android.mk
+index 239e40e..79ec9cb 100644
+--- a/src/Android.mk
++++ b/src/Android.mk
+@@ -60,6 +60,18 @@ LOCAL_C_INCLUDES := $(libgtest_includes)
+ 
+ LOCAL_CFLAGS += -O0
+ 
++ifeq ($(BUILD_WITH_LIBJINGLE),true)
++libgtest_includes += \
++	       $(LOCAL_PATH)../../expat/lib \
++               $(LOCAL_PATH)../../srtp
++
++LOCAL_CFLAGS += LIBJINGLE_UNITTEST \
++		EXPAT_RELATIVE_PATH \
++		SRTP_RELATIVE_PATH
++
++LOCAL_EXPORT_CFLAGS := $(LOCAL_CFLAGS)
++endif
++
+ LOCAL_MODULE := libgtest_host
+ LOCAL_MODULE_TAGS := eng
+ 

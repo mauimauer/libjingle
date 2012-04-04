@@ -1,0 +1,24 @@
+;; -*- mode: Org; -*-
+
+* Status
+** DONE First build
+   CLOSED: [2012-04-04 Wed 19:38]
+   - State "DONE"       from "TODO"       [2012-04-04 Wed 19:38]
+   Ok, i've able to build it, and callapp started, but real p2ptransport
+   not works due to: following error:
+   Warning(basicportallocator.cc:408): Machine has no networks; no ports will be allocated
+   Seems like i've missed somthing, unittests should help
+   NOTE: If libjingle built as dynamic lib call app crash with SIGSEGV, so let's
+   use static one for awhile, investigate it later.
+** TODO Add unittests builds
+** TODO Run unittests investigate test failures.
+   W/o this stage it is useless to start any other works.
+
+** TODO Investigate webrtc and glue layer in order to implement androidmediaservice
+   androidmediaservice.{h,cc} is a mysterious file, libjingle and webrtc
+   reference it but i can't find it anywhere. WTF?
+   It should not be too hard to implement it
+   resources: csipsimple and webrtc examples
+
+
+

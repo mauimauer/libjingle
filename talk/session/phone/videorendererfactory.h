@@ -41,8 +41,8 @@ namespace cricket {
 class VideoRendererFactory {
  public:
   static VideoRenderer* CreateGuiVideoRenderer(int x, int y) {
-  #if defined(LINUX)
-    return new GtkVideoRenderer(x, y);
+  #if defined(LINUX) && !defined(ANDROID)
+    xreturn new GtkVideoRenderer(x, y);
   #elif defined(OSX)
     CarbonVideoRenderer* renderer = new CarbonVideoRenderer(x, y);
     // Needs to be initialized on the main thread.

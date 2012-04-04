@@ -29,7 +29,7 @@
 
 #if defined(HAVE_LINPHONE)
 #include "talk/session/phone/linphonemediaengine.h"
-#elif defined(ANDROID)
+#elif defined(ANDROID_MEDIA)
 #include "talk/session/phone/androidmediaengine.h"
 #else
 #if defined(HAVE_WEBRTC_VOICE)
@@ -57,7 +57,7 @@ CompositeMediaEngine<WebRtcVoiceEngine, WebRtcVideoEngine>::
 MediaEngineInterface* MediaEngineFactory::Create() {
 #if defined(HAVE_LINPHONE)
   return new LinphoneMediaEngine("", "");
-#elif defined(ANDROID)
+#elif defined(ANDROID_MEDIA)
   return AndroidMediaEngineFactory::Create();
 #elif defined(AUDIO_ENG_NAME) && defined(VIDEO_ENG_NAME)
   return new CompositeMediaEngine<AUDIO_ENG_NAME, VIDEO_ENG_NAME>();

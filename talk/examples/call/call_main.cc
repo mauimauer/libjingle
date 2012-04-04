@@ -48,7 +48,7 @@
 #include "talk/examples/call/console.h"
 #include "talk/examples/call/mediaenginefactory.h"
 #include "talk/p2p/base/constants.h"
-#ifdef ANDROID
+#ifdef ANDROID_MEDIA
 #include "talk/session/phone/androidmediaengine.h"
 #endif
 #include "talk/session/phone/mediasessionclient.h"
@@ -181,7 +181,7 @@ class DebugLog : public sigslot::has_slots<> {
 static DebugLog debug_log_;
 static const int DEFAULT_PORT = 5222;
 
-#ifdef ANDROID
+#ifdef ANDROID_MEDIA
 static std::vector<cricket::AudioCodec> codecs;
 static const cricket::AudioCodec ISAC(103, "ISAC", 40000, 16000, 1, 0);
 
@@ -362,7 +362,7 @@ int main(int argc, char **argv) {
 
   talk_base::InitializeSSL();
 
-#ifdef ANDROID
+#ifdef ANDROID_MEDIA
   InitAndroidMediaEngineFactory(AndroidMediaEngineFactory);
 #endif
 
