@@ -8,8 +8,8 @@ function apply_patches()
     for diff_file in `ls ../pc/$mdir`
     do
 	echo try to apply: ../pc/$mdir/$diff_file
-	cat ../pc/$mdir/$diff_file
-#	patch -p1 < $diff_file || exit 1
+	#cat ../pc/$mdir/$diff_file
+	patch -p1 < ../pc/$mdir/$diff_file || exit 1
     done
     popd
 }
