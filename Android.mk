@@ -281,15 +281,18 @@ LOCAL_SRC_FILES := \
 LOCAL_LDLIBS := -llog -lz
 LOCAL_SHARED_LIBRARIES := libjingle libxmpphelp
 include $(BUILD_EXECUTABLE)
-
-
-
+#
+# Built unittest
+ifeq ($(MY_USE_UNITTEST),1)
+include $(LIBJINGLE_PATH)/Unittest.mk
+# Also build self unitest
+include $(LIBJINGLE_PATH)/talk/third_party/gtest/Android.mk
+endif
 ########################################################################
 ########################################################################
 # Third party libraries rules
 include $(CLEAR_VARS)
 include $(LIBJINGLE_PATH)/talk/third_party/expat/Android.mk
-include $(LIBJINGLE_PATH)/talk/third_party/gtest/Android.mk
 include $(LIBJINGLE_PATH)/talk/third_party/srtp/Android.mk
 include $(LIBJINGLE_PATH)/talk/third_party/openssl/Android.mk
 #### Build openssl                                                                     
