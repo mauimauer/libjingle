@@ -1,5 +1,6 @@
-APP_STL := gnustl_static
-#APP_STL := stlport_static
+MY_DYNAMIC_STLLIB:= gnustl_shared
+APP_STL := $(MY_DYNAMIC_STLLIB)
+
 APP_PLATFORM := android-9
 
 # Build libssl with DTLS support

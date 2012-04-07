@@ -227,7 +227,7 @@ LIBJINGLE_SRC_FILES += \
 # Build libjingle
 ######################
 include $(CLEAR_VARS)
-LOCAL_MODULE := libjingle_static
+LOCAL_MODULE := libjingle
 LOCAL_CPP_EXTENSION := .cc
 LOCAL_CPPFLAGS :=$(MY_JINGLE_CPPFLAGS)
 LOCAL_EXPORT_CPPFLAGS :=$(LOCAL_CPPFLAGS)
@@ -237,11 +237,11 @@ LOCAL_STATIC_LIBRARIES := cpufeatures \
 				libexpat_static \
 				libsrtp_static \
 				libssl_static \
-				libcrypto_static \
-				libstlport_static
+				libcrypto_static
 
-LOCAL_LDLIBS := -llog
-include $(BUILD_STATIC_LIBRARY)
+LOCAL_SHARED_LIBRARIES:=  $(MY_DYNAMIC_STLLIB)
+LOCAL_LDLIBS := -llog -lz
+include $(BUILD_SHARED_LIBRARY)
 
 
 ###############################################
@@ -249,7 +249,7 @@ include $(BUILD_STATIC_LIBRARY)
 ###############################################
 
 include $(CLEAR_VARS)
-LOCAL_MODULE := libxmpphelp_static
+LOCAL_MODULE := libxmpphelp
 LOCAL_CPPFLAGS := $(MY_JINGLE_CPPFLAGS)
 LOCAL_CPP_EXTENSION := .cc
 LOCAL_SRC_FILES := \
@@ -259,7 +259,7 @@ LOCAL_SRC_FILES := \
 		talk/examples/login/xmppsocket.cc
 
 LOCAL_SHARED_LIBRARIES := libjingle
-include $(BUILD_STATIC_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)
 
 #### VoiceChat Call application
 include $(CLEAR_VARS)
@@ -279,7 +279,7 @@ LOCAL_SRC_FILES := \
 		talk/examples/call/presencepushtask.cc
 
 LOCAL_LDLIBS := -llog -lz
-LOCAL_STATIC_LIBRARIES := libjingle_static libxmpphelp_static
+LOCAL_SHARED_LIBRARIES := libjingle libxmpphelp
 include $(BUILD_EXECUTABLE)
 
 
