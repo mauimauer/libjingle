@@ -18,8 +18,8 @@ function apply_patches()
 git clone https://android.googlesource.com/platform/external/expat
 apply_patches expat
 
-# Googletests unit test
-git clone git://github.com/CyanogenMod/android_external_gtest.git gtest
+# Googletests unit test version 1.6.0
+git clone -b android git://github.com/dmonakhov/googletest.git gtest
 apply_patches gtest
 
 # libsrtp
