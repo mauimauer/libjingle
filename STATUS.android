@@ -10,9 +10,23 @@
    Seems like i've missed somthing, unittests should help
    NOTE: If libjingle built as dynamic lib call app crash with SIGSEGV, so let's
    use static one for awhile, investigate it later.
-** TODO Add unittests builds
-** TODO Run unittests investigate test failures.
+** DONE Add unittests builds
+   CLOSED: [2012-04-07 Sat 06:26]
+   - State "DONE"       from "TODO"       [2012-04-07 Sat 06:26]
+   Gtest-1.6.0 still failes during selftest   
+** DONE Run unittests investigate test failures.
+   CLOSED: [2012-04-07 Sat 06:32]
+   - State "DONE"       from "TODO"       [2012-04-07 Sat 06:32]
    W/o this stage it is useless to start any other works.
+   - base_unittest works fine, but crushed due to bug in gtest-1.6 itself
+   - p2p_unittest output similar to linux one.
+   It is appeader that callapp not works due to luck of ifaddrs header in android
+   talk/base/network.cc:185: BasicNetworkManager::CreateNetworks
+
+** TODO Investigate conwinient way to import linux device headers for android
+   'ifaddrs.h' headers required to build network device/address lookup support
+   Off cource it is trivial to copy it from somewhere, but it is better to
+   find out right way to import system/kernel headers.
 
 ** TODO Investigate webrtc and glue layer in order to implement androidmediaservice
    androidmediaservice.{h,cc} is a mysterious file, libjingle and webrtc
