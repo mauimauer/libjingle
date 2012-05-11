@@ -141,7 +141,6 @@ bool LinphoneMediaEngine::FindAudioCodec(const AudioCodec &c) {
 ///////////////////////////////////////////////////////////////////////////
 LinphoneVoiceChannel::LinphoneVoiceChannel(LinphoneMediaEngine*eng)
     : pt_(-1),
-      audio_stream_(0),
       engine_(eng),
       ring_stream_(0)
 {
@@ -154,7 +153,7 @@ LinphoneVoiceChannel::LinphoneVoiceChannel(LinphoneMediaEngine*eng)
   port1 = socket_->GetLocalAddress().port(); /* and here we get port choosed by OS */
   port2 = PORT_UNUSED;
   socket_->SignalReadEvent.connect(this, &LinphoneVoiceChannel::OnIncomingData);
-
+  audio_stream_ = audio_stream_new(-1, 0);
 }
 
 LinphoneVoiceChannel::~LinphoneVoiceChannel()
@@ -173,9 +172,9 @@ bool LinphoneVoiceChannel::SetPlayout(bool playout) {
 
 bool LinphoneVoiceChannel::SetSendCodecs(const std::vector<AudioCodec>& codecs) {
 
-  bool first = true;
   std::vector<AudioCodec>::const_iterator i;
-
+  int codec = -1;
+  int ret;
   ortp_set_log_level_mask(ORTP_MESSAGE|ORTP_WARNING|ORTP_ERROR|ORTP_FATAL);
 
   for (i = codecs.begin(); i < codecs.end(); i++) {
@@ -195,27 +194,41 @@ bool LinphoneVoiceChannel::SetSendCodecs(const std::vector<AudioCodec>& codecs) 
     } else if (i->id == 0)
       rtp_profile_set_payload(&av_profile, 0, &payload_type_pcmu8000);
 
-    if (first) {
-      StopRing();
+    if (codec == -1) {
+      codec = i->id;
       LOG(LS_INFO) << "Using " << i->name << "/" << i->clockrate;
-      pt_ = i->id;
-      audio_stream_ = audio_stream_start(&av_profile, -1, "localhost", port1, i->id, 250, 0); /* -1 means that function will choose some free port */
-      port2 = rtp_session_get_local_port(audio_stream_->session);
-      first = false;
     }
   }
+  StopRing();
+  // We're being asked to set an empty list of codecs. This will only happen when
+  // working with a buggy client; let's try PCMU.
+  if (codec == -1)
+    codec = 0;
 
-  if (first) {
-    StopRing();
-    // We're being asked to set an empty list of codecs. This will only happen when
-    // working with a buggy client; let's try PCMU.
-    LOG(LS_WARNING) << "Received empty list of codces; using PCMU/8000";
-    audio_stream_ = audio_stream_start(&av_profile, -1, "localhost", port1, 0, 250, 0); /* -1 means that function will choose some free port */
-    port2 = rtp_session_get_local_port(audio_stream_->session);
-  }
+  MSSndCard *snd_pb = ms_snd_card_manager_get_default_capture_card(ms_snd_card_manager_get());
+  MSSndCard *snd_cap = ms_snd_card_manager_get_default_playback_card(ms_snd_card_manager_get());
+  if (snd_pb == NULL || snd_cap == NULL)
+    return false;
+
+  ret = audio_stream_start_full(audio_stream_, &av_profile,"localhost",
+                                port1, port1 + 1,
+                                codec, 250, NULL, NULL, 
+                                snd_pb, snd_cap, 0);
+  if (ret)
+    return false;
+
+  port2 = rtp_session_get_local_port(audio_stream_->session);
 
   return true;
 }
+
+bool LinphoneVoiceChannel::AddSendStream(const cricket::StreamParams& st)
+{
+  LOG(LS_INFO) << "linphone:: SET send stream ssrc: " << st.first_ssrc();
+  rtp_session_set_ssrc(audio_stream_->session, st.first_ssrc());
+  return true;
+}
+
 
 bool LinphoneVoiceChannel::SetSend(SendFlags flag) {
   mute_ = !flag;
