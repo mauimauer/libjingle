@@ -42,7 +42,7 @@ class VideoRendererFactory {
  public:
   static VideoRenderer* CreateGuiVideoRenderer(int x, int y) {
   #if defined(LINUX)
-    return new GtkVideoRenderer(x, y);
+	  return NULL;
   #elif defined(OSX)
     CarbonVideoRenderer* renderer = new CarbonVideoRenderer(x, y);
     // Needs to be initialized on the main thread.

@@ -27,7 +27,7 @@
 
 #include "talk/sound/linuxsoundsystem.h"
 
-#include "talk/sound/alsasoundsystem.h"
+//#include "talk/sound/alsasoundsystem.h"
 #include "talk/sound/pulseaudiosoundsystem.h"
 
 namespace cricket {
@@ -36,7 +36,9 @@ const SoundSystemCreator kLinuxSoundSystemCreators[] = {
 #ifdef HAVE_LIBPULSE
   &PulseAudioSoundSystem::Create,
 #endif
+#ifdef HAVE_ALSA
   &AlsaSoundSystem::Create,
+#endif
 };
 
 }  // namespace cricket
