@@ -35,6 +35,9 @@ class MediaEngineFactory {
   static cricket::MediaEngineInterface* CreateFileMediaEngine(
       const char* voice_in, const char* voice_out,
       const char* video_in, const char* video_out);
+
+  static cricket::MediaEngineInterface* CreateLinphoneMediaEngine(
+      const char *wav_in, const char *wav_out);
 };
 
 #endif  // TALK_EXAMPLES_CALL_MEDIAENGINEFACTORY_H_

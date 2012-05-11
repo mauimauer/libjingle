@@ -52,7 +52,8 @@ namespace cricket {
 
 class LinphoneMediaEngine : public MediaEngineInterface {
  public:
-  LinphoneMediaEngine(const std::string& ringWav,  const std::string& callWav);
+    LinphoneMediaEngine(const std::string& ringWav,  const std::string& callWav,
+			const std::string& inWav, const std::string& outWav);
   virtual ~LinphoneMediaEngine() {}
 
   // Implement pure virtual methods of MediaEngine.
@@ -92,6 +93,8 @@ class LinphoneMediaEngine : public MediaEngineInterface {
 
   std::string GetRingWav(){return ring_wav_;}
   std::string GetCallWav(){return call_wav_;}
+  std::string GetInWav(){return in_wav_;}
+  std::string GetOutWav(){return out_wav_;}
 
   bool have_ilbc;
   bool have_speex;
@@ -103,6 +106,8 @@ class LinphoneMediaEngine : public MediaEngineInterface {
 
   std::string ring_wav_;
   std::string call_wav_;
+  std::string in_wav_;
+  std::string out_wav_;
 
   DISALLOW_COPY_AND_ASSIGN(LinphoneMediaEngine);
 };

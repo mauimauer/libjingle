@@ -31,6 +31,8 @@
 #include "talk/session/phone/mediaengine.h"
 #include "talk/session/phone/fakemediaengine.h"
 #include "talk/session/phone/filemediaengine.h"
+#include "talk/session/phone/linphonemediaengine.h"
+
 
 std::vector<cricket::AudioCodec> RequiredAudioCodecs() {
   std::vector<cricket::AudioCodec> audio_codecs;
@@ -54,10 +56,17 @@ std::vector<cricket::VideoCodec> RequiredVideoCodecs() {
   return video_codecs;
 }
 
+cricket::MediaEngineInterface* MediaEngineFactory::CreateLinphoneMediaEngine(
+	const char *wav_in, const char *wav_out) {
+	cricket::LinphoneMediaEngine *engine;
+	engine = new cricket::LinphoneMediaEngine("", "", wav_in, wav_out);
+	return engine;
+}
+
 cricket::MediaEngineInterface* MediaEngineFactory::CreateFileMediaEngine(
     const char* voice_in, const char* voice_out,
-    const char* video_in, const char* video_out) {
-
+    const char* video_in, const char* video_out)
+{
   cricket::FileMediaEngine* file_media_engine = new cricket::FileMediaEngine;
   // Set the RTP dump file names.
   if (voice_in) {

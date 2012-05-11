@@ -56,7 +56,7 @@ CompositeMediaEngine<WebRtcVoiceEngine, WebRtcVideoEngine>::
 
 MediaEngineInterface* MediaEngineFactory::Create() {
 #if defined(HAVE_LINPHONE)
-  return new LinphoneMediaEngine("", "");
+  return new LinphoneMediaEngine("", "", "", "");
 #elif defined(ANDROID)
   return AndroidMediaEngineFactory::Create();
 #elif defined(AUDIO_ENG_NAME) && defined(VIDEO_ENG_NAME)

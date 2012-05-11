@@ -58,7 +58,12 @@ namespace cricket {
 ///////////////////////////////////////////////////////////////////////////
 // Implementation of LinphoneMediaEngine.
 ///////////////////////////////////////////////////////////////////////////
-LinphoneMediaEngine::LinphoneMediaEngine(const std::string& ringWav,  const std::string& callWav) : ring_wav_(ringWav), call_wav_(callWav) {
+LinphoneMediaEngine::LinphoneMediaEngine(const std::string& ringWav,  const std::string& callWav,
+                                         const std::string& inWav,  const std::string& outWav) :
+    ring_wav_(ringWav),
+    call_wav_(callWav),
+    in_wav_(inWav),
+    out_wav_(outWav) {
   ortp_init();
   ms_init();
 
@@ -205,15 +210,23 @@ bool LinphoneVoiceChannel::SetSendCodecs(const std::vector<AudioCodec>& codecs) 
   if (codec == -1)
     codec = 0;
 
-  MSSndCard *snd_pb = ms_snd_card_manager_get_default_capture_card(ms_snd_card_manager_get());
-  MSSndCard *snd_cap = ms_snd_card_manager_get_default_playback_card(ms_snd_card_manager_get());
-  if (snd_pb == NULL || snd_cap == NULL)
-    return false;
-
-  ret = audio_stream_start_full(audio_stream_, &av_profile,"localhost",
-                                port1, port1 + 1,
-                                codec, 250, NULL, NULL, 
-                                snd_pb, snd_cap, 0);
+  if (engine_->GetInWav().empty() || engine_->GetOutWav().empty()) {
+    LOG(LS_INFO) << "linphone:: Create Soudcard/mic engine";
+    MSSndCard *snd_pb = ms_snd_card_manager_get_default_capture_card(ms_snd_card_manager_get());
+    MSSndCard *snd_cap = ms_snd_card_manager_get_default_playback_card(ms_snd_card_manager_get());
+    if (snd_pb == NULL || snd_cap == NULL)
+      return false;
+    ret = audio_stream_start_full(audio_stream_, &av_profile,"localhost",
+                            port1, port1 + 1,
+                            codec, 250, NULL, NULL, 
+                            snd_pb, snd_cap, 0);
+  } else {
+    LOG(LS_INFO) << "linphone:: Create File angine";
+    ret = audio_stream_start_with_files(audio_stream_, &av_profile, "localhost",
+                                        port1, port1+1, codec, 250,
+                                        engine_->GetInWav().c_str(),
+                                        engine_->GetOutWav().c_str());
+  }
   if (ret)
     return false;
 
@@ -255,6 +268,7 @@ void LinphoneVoiceChannel::OnPacketReceived(talk_base::Buffer* packet) {
 void LinphoneVoiceChannel::StartRing(bool bIncomingCall)
 {
   MSSndCard *sndcard = NULL;
+  return ;
   sndcard=ms_snd_card_manager_get_default_card(ms_snd_card_manager_get());
   if (sndcard)
   {

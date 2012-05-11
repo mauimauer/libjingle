@@ -425,6 +425,16 @@ talk.App(env, name = "call",
            "examples/call/presenceouttask.cc",
            "examples/call/presencepushtask.cc",
          ],
+	 cppdefines = [
+	       "HAVE_LINPHONE",
+	       "HAVE_SPEEX",
+	       "HAVE_ILBC",
+               "FEATURE_ENABLE_VOICEMAIL",
+               "EXPAT_RELATIVE_PATH",
+               "SRTP_RELATIVE_PATH",
+               "XML_STATIC",
+         ],
+
          libs = [
            "jingle",
            "expat",
