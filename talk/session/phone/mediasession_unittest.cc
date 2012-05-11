@@ -210,7 +210,7 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateAudioOffer) {
   EXPECT_NE(0U, acd->first_ssrc());             // a random nonzero ssrc
   EXPECT_EQ(kAutoBandwidth, acd->bandwidth());  // default bandwidth (auto)
   EXPECT_TRUE(acd->rtcp_mux());                 // rtcp-mux defaults on
-  ASSERT_CRYPTO(acd, false, 2U, CS_AES_CM_128_HMAC_SHA1_32);
+  ASSERT_CRYPTO(acd, 0, 2U, CS_AES_CM_128_HMAC_SHA1_32);
 }
 
 // Create a typical video offer, and ensure it matches what we expect.
@@ -236,13 +236,13 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateVideoOffer) {
   EXPECT_NE(0U, acd->first_ssrc());             // a random nonzero ssrc
   EXPECT_EQ(kAutoBandwidth, acd->bandwidth());  // default bandwidth (auto)
   EXPECT_TRUE(acd->rtcp_mux());                 // rtcp-mux defaults on
-  ASSERT_CRYPTO(acd, false, 2U, CS_AES_CM_128_HMAC_SHA1_32);
+  ASSERT_CRYPTO(acd, 0, 2U, CS_AES_CM_128_HMAC_SHA1_32);
   EXPECT_EQ(MEDIA_TYPE_VIDEO, vcd->type());
   EXPECT_EQ(f1_.video_codecs(), vcd->codecs());
   EXPECT_NE(0U, vcd->first_ssrc());             // a random nonzero ssrc
   EXPECT_EQ(kAutoBandwidth, vcd->bandwidth());  // default bandwidth (auto)
   EXPECT_TRUE(vcd->rtcp_mux());                 // rtcp-mux defaults on
-  ASSERT_CRYPTO(vcd, false, 1U, CS_AES_CM_128_HMAC_SHA1_80);
+  ASSERT_CRYPTO(vcd, 0, 1U, CS_AES_CM_128_HMAC_SHA1_80);
 }
 
 // Create a typical data offer, and ensure it matches what we expect.
@@ -268,14 +268,14 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateDataOffer) {
   EXPECT_NE(0U, acd->first_ssrc());             // a random nonzero ssrc
   EXPECT_EQ(kAutoBandwidth, acd->bandwidth());  // default bandwidth (auto)
   EXPECT_TRUE(acd->rtcp_mux());                 // rtcp-mux defaults on
-  ASSERT_CRYPTO(acd, false, 2U, CS_AES_CM_128_HMAC_SHA1_32);
+  ASSERT_CRYPTO(acd, 0, 2U, CS_AES_CM_128_HMAC_SHA1_32);
   EXPECT_EQ(MEDIA_TYPE_DATA, dcd->type());
   EXPECT_EQ(f1_.data_codecs(), dcd->codecs());
   EXPECT_NE(0U, dcd->first_ssrc());             // a random nonzero ssrc
   EXPECT_EQ(cricket::kDataMaxBandwidth,
             dcd->bandwidth());                  // default bandwidth (auto)
   EXPECT_TRUE(dcd->rtcp_mux());                 // rtcp-mux defaults on
-  ASSERT_CRYPTO(dcd, false, 1U, CS_AES_CM_128_HMAC_SHA1_80);
+  ASSERT_CRYPTO(dcd, 0, 1U, CS_AES_CM_128_HMAC_SHA1_80);
 }
 
 // Create an audio, video offer without legacy StreamParams.
@@ -321,7 +321,7 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateAudioAnswer) {
   EXPECT_NE(0U, acd->first_ssrc());             // a random nonzero ssrc
   EXPECT_EQ(kAutoBandwidth, acd->bandwidth());  // negotiated auto bw
   EXPECT_TRUE(acd->rtcp_mux());                 // negotiated rtcp-mux
-  ASSERT_CRYPTO(acd, false, 1U, CS_AES_CM_128_HMAC_SHA1_32);
+  ASSERT_CRYPTO(acd, 0, 1U, CS_AES_CM_128_HMAC_SHA1_32);
 }
 
 // Create a typical video answer, and ensure it matches what we expect.
@@ -349,12 +349,12 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateVideoAnswer) {
   EXPECT_EQ(kAutoBandwidth, acd->bandwidth());  // negotiated auto bw
   EXPECT_NE(0U, acd->first_ssrc());             // a random nonzero ssrc
   EXPECT_TRUE(acd->rtcp_mux());                 // negotiated rtcp-mux
-  ASSERT_CRYPTO(acd, false, 1U, CS_AES_CM_128_HMAC_SHA1_32);
+  ASSERT_CRYPTO(acd, 0, 1U, CS_AES_CM_128_HMAC_SHA1_32);
   EXPECT_EQ(MEDIA_TYPE_VIDEO, vcd->type());
   EXPECT_EQ(MAKE_VECTOR(kVideoCodecsAnswer), vcd->codecs());
   EXPECT_NE(0U, vcd->first_ssrc());             // a random nonzero ssrc
   EXPECT_TRUE(vcd->rtcp_mux());                 // negotiated rtcp-mux
-  ASSERT_CRYPTO(vcd, false, 1U, CS_AES_CM_128_HMAC_SHA1_80);
+  ASSERT_CRYPTO(vcd, 0, 1U, CS_AES_CM_128_HMAC_SHA1_80);
 }
 
 TEST_F(MediaSessionDescriptionFactoryTest, TestCreateDataAnswer) {
@@ -381,12 +381,12 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateDataAnswer) {
   EXPECT_EQ(kAutoBandwidth, acd->bandwidth());  // negotiated auto bw
   EXPECT_NE(0U, acd->first_ssrc());             // a random nonzero ssrc
   EXPECT_TRUE(acd->rtcp_mux());                 // negotiated rtcp-mux
-  ASSERT_CRYPTO(acd, false, 1U, CS_AES_CM_128_HMAC_SHA1_32);
+  ASSERT_CRYPTO(acd, 0, 1U, CS_AES_CM_128_HMAC_SHA1_32);
   EXPECT_EQ(MEDIA_TYPE_DATA, vcd->type());
   EXPECT_EQ(MAKE_VECTOR(kDataCodecsAnswer), vcd->codecs());
   EXPECT_NE(0U, vcd->first_ssrc());             // a random nonzero ssrc
   EXPECT_TRUE(vcd->rtcp_mux());                 // negotiated rtcp-mux
-  ASSERT_CRYPTO(vcd, false, 1U, CS_AES_CM_128_HMAC_SHA1_80);
+  ASSERT_CRYPTO(vcd, 0, 1U, CS_AES_CM_128_HMAC_SHA1_80);
 }
 
 // Create an audio, video, data answer without legacy StreamParams.
@@ -615,11 +615,11 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateMultiStreamVideoOffer) {
 
   EXPECT_EQ(kAutoBandwidth, acd->bandwidth());  // default bandwidth (auto)
   EXPECT_TRUE(acd->rtcp_mux());                 // rtcp-mux defaults on
-  ASSERT_CRYPTO(acd, false, 2U, CS_AES_CM_128_HMAC_SHA1_32);
+  ASSERT_CRYPTO(acd, 0, 2U, CS_AES_CM_128_HMAC_SHA1_32);
 
   EXPECT_EQ(MEDIA_TYPE_VIDEO, vcd->type());
   EXPECT_EQ(f1_.video_codecs(), vcd->codecs());
-  ASSERT_CRYPTO(vcd, false, 1U, CS_AES_CM_128_HMAC_SHA1_80);
+  ASSERT_CRYPTO(vcd, 0, 1U, CS_AES_CM_128_HMAC_SHA1_80);
 
   const StreamParamsVec& video_streams = vcd->streams();
   ASSERT_EQ(1U, video_streams.size());
@@ -630,7 +630,7 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateMultiStreamVideoOffer) {
 
   EXPECT_EQ(MEDIA_TYPE_DATA, dcd->type());
   EXPECT_EQ(f1_.data_codecs(), dcd->codecs());
-  ASSERT_CRYPTO(dcd, false, 1U, CS_AES_CM_128_HMAC_SHA1_80);
+  ASSERT_CRYPTO(dcd, 0, 1U, CS_AES_CM_128_HMAC_SHA1_80);
 
   const StreamParamsVec& data_streams = dcd->streams();
   ASSERT_EQ(2U, data_streams.size());
@@ -645,7 +645,7 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateMultiStreamVideoOffer) {
   EXPECT_EQ(cricket::kDataMaxBandwidth,
             dcd->bandwidth());                  // default bandwidth (auto)
   EXPECT_TRUE(dcd->rtcp_mux());                 // rtcp-mux defaults on
-  ASSERT_CRYPTO(dcd, false, 1U, CS_AES_CM_128_HMAC_SHA1_80);
+  ASSERT_CRYPTO(dcd, 0, 1U, CS_AES_CM_128_HMAC_SHA1_80);
 
 
   // Update the offer. Add a new video track that is not synched to the
@@ -678,11 +678,11 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateMultiStreamVideoOffer) {
   EXPECT_EQ(vcd->codecs(), updated_vcd->codecs());
   EXPECT_EQ(dcd->type(), updated_dcd->type());
   EXPECT_EQ(dcd->codecs(), updated_dcd->codecs());
-  ASSERT_CRYPTO(updated_acd, false, 2U, CS_AES_CM_128_HMAC_SHA1_32);
+  ASSERT_CRYPTO(updated_acd, 0, 2U, CS_AES_CM_128_HMAC_SHA1_32);
   EXPECT_TRUE(CompareCryptoParams(acd->cryptos(), updated_acd->cryptos()));
-  ASSERT_CRYPTO(updated_vcd, false, 1U, CS_AES_CM_128_HMAC_SHA1_80);
+  ASSERT_CRYPTO(updated_vcd, 0, 1U, CS_AES_CM_128_HMAC_SHA1_80);
   EXPECT_TRUE(CompareCryptoParams(vcd->cryptos(), updated_vcd->cryptos()));
-  ASSERT_CRYPTO(updated_dcd, false, 1U, CS_AES_CM_128_HMAC_SHA1_80);
+  ASSERT_CRYPTO(updated_dcd, 0, 1U, CS_AES_CM_128_HMAC_SHA1_80);
   EXPECT_TRUE(CompareCryptoParams(dcd->cryptos(), updated_dcd->cryptos()));
 
   const StreamParamsVec& updated_audio_streams = updated_acd->streams();
@@ -746,9 +746,9 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateMultiStreamVideoAnswer) {
       static_cast<const VideoContentDescription*>(vc->description);
   const DataContentDescription* dcd =
       static_cast<const DataContentDescription*>(dc->description);
-  ASSERT_CRYPTO(acd, false, 1U, CS_AES_CM_128_HMAC_SHA1_32);
-  ASSERT_CRYPTO(vcd, false, 1U, CS_AES_CM_128_HMAC_SHA1_80);
-  ASSERT_CRYPTO(dcd, false, 1U, CS_AES_CM_128_HMAC_SHA1_80);
+  ASSERT_CRYPTO(acd, 0, 1U, CS_AES_CM_128_HMAC_SHA1_32);
+  ASSERT_CRYPTO(vcd, 0, 1U, CS_AES_CM_128_HMAC_SHA1_80);
+  ASSERT_CRYPTO(dcd, 0, 1U, CS_AES_CM_128_HMAC_SHA1_80);
 
   EXPECT_EQ(MEDIA_TYPE_AUDIO, acd->type());
   EXPECT_EQ(MAKE_VECTOR(kAudioCodecsAnswer), acd->codecs());
@@ -815,11 +815,11 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateMultiStreamVideoAnswer) {
   const DataContentDescription* updated_dcd =
       static_cast<const DataContentDescription*>(dc->description);
 
-  ASSERT_CRYPTO(updated_acd, false, 1U, CS_AES_CM_128_HMAC_SHA1_32);
+  ASSERT_CRYPTO(updated_acd, 0, 1U, CS_AES_CM_128_HMAC_SHA1_32);
   EXPECT_TRUE(CompareCryptoParams(acd->cryptos(), updated_acd->cryptos()));
-  ASSERT_CRYPTO(updated_vcd, false, 1U, CS_AES_CM_128_HMAC_SHA1_80);
+  ASSERT_CRYPTO(updated_vcd, 0, 1U, CS_AES_CM_128_HMAC_SHA1_80);
   EXPECT_TRUE(CompareCryptoParams(vcd->cryptos(), updated_vcd->cryptos()));
-  ASSERT_CRYPTO(updated_dcd, false, 1U, CS_AES_CM_128_HMAC_SHA1_80);
+  ASSERT_CRYPTO(updated_dcd, 0, 1U, CS_AES_CM_128_HMAC_SHA1_80);
   EXPECT_TRUE(CompareCryptoParams(dcd->cryptos(), updated_dcd->cryptos()));
 
   EXPECT_EQ(acd->type(), updated_acd->type());
