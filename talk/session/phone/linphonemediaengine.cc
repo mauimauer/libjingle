@@ -147,7 +147,10 @@ bool LinphoneMediaEngine::FindAudioCodec(const AudioCodec &c) {
 LinphoneVoiceChannel::LinphoneVoiceChannel(LinphoneMediaEngine*eng)
     : pt_(-1),
       engine_(eng),
-      ring_stream_(0)
+      ring_stream_(0),
+      pkt_in(0),
+      pkt_out(0),
+      zrtp(0)
 {
 
   talk_base::Thread *thread = talk_base::ThreadManager::Instance()->CurrentThread();
@@ -249,10 +252,19 @@ bool LinphoneVoiceChannel::SetSend(SendFlags flag) {
 }
 
 void LinphoneVoiceChannel::OnPacketReceived(talk_base::Buffer* packet) {
-  const void* data = packet->data();
+  const char* data = packet->data();
   int len = packet->length();
   uint8 buf[2048];
   memcpy(buf, data, len);
+  pkt_out++;
+
+  if (!zrtp && pkt_in > 2 && pkt_out > 2){
+	  zrtp = 1;
+	  OrtpZrtpParams params;
+	  params.zid_file = "./zid";
+	  audio_stream_enable_zrtp(audio_stream_, &params);
+  }
+
 
   if (port2 == PORT_UNUSED)
     return;
@@ -303,6 +315,7 @@ void LinphoneVoiceChannel::OnIncomingData(talk_base::AsyncSocket *s)
 {
   char *buf[2048];
   int len;
+  pkt_in++;
   len = s->Recv(buf, sizeof(buf));
   talk_base::Buffer packet(buf, len, sizeof(buf));
   if (network_interface_ && !mute_)

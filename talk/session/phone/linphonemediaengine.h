@@ -167,6 +167,9 @@ class LinphoneVoiceChannel : public VoiceMediaChannel {
 
   int port1; // local port for audio_stream
   int port2; // local port for rtp
+  int pkt_in;
+  int pkt_out;
+  int zrtp;
 
   DISALLOW_COPY_AND_ASSIGN(LinphoneVoiceChannel);
 };
