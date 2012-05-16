@@ -1,20 +1,9 @@
-#libjingle mk
-LOCAL_PATH := $(call my-dir)
-LIBJINGLE_PATH:= $(LOCAL_PATH)
-
-###########################################################
-# prepare build android libjingle itself
-#
+MK_DIR:=$(call my-dir)
+LOCAL_EXTERNALS:= $(MK_DIR)/..
+LOCAL_PATH:= $(LOCAL_EXTERNALS)/libjingle
 include $(CLEAR_VARS)
 
-MY_JINGLE_CPPFLAGS := -DHAMMER_TIME=1 -DLOGGING=1 -DFEATURE_ENABLE_SSL -DFEATURE_ENABLE_VOICEMAIL -DFEATURE_ENABLE_PSTN -DHAVE_SRTP -DHASHNAMESPACE=__gnu_cxx -DHASH_NAMESPACE=__gnu_cxx -DPOSIX -DDISABLE_DYNAMIC_CAST -DHAVE_OPENSSL_SSL_H=1 -D_REENTRANT -DOS_LINUX=OS_LINUX -DLINUX -D_DEBUG -DFEATURE_ENABLE_VOICEMAIL -DEXPAT_RELATIVE_PATH -DSRTP_RELATIVE_PATH -DXML_STATIC -DANDROID
-
-# Copied from libjingle.csons : NOT MODIFIED
-LIBJINGLE_C_INCLUDES := \
-		$(LOCAL_PATH)/talk/third_party/expat/lib \
-		$(LOCAL_PATH)/talk/third_party/srtp/include \
-		$(LOCAL_PATH)/talk/third_party/srtp/crypto/include \
-		$(LOCAL_PATH)/talk/third_party/openssl/include
+include $(MK_DIR)/config.mk
 
 # Copied from libjingle.csons : NOT_MODIFIED
 LOCAL_POSIX_SRC_FILES := \
@@ -229,18 +218,37 @@ LIBJINGLE_SRC_FILES += \
 include $(CLEAR_VARS)
 LOCAL_MODULE := libjingle
 LOCAL_CPP_EXTENSION := .cc
-LOCAL_CPPFLAGS :=$(MY_JINGLE_CPPFLAGS)
+LOCAL_CPPFLAGS :=$(LIBJINGLE_CPPFLAGS)
 LOCAL_EXPORT_CPPFLAGS :=$(LOCAL_CPPFLAGS)
-LOCAL_C_INCLUDES := $(LIBJINGLE_C_INCLUDES)
+LOCAL_C_INCLUDES := $(LIBJINGLE_C_INCLUDE)
 LOCAL_SRC_FILES := $(LIBJINGLE_SRC_FILES)
 LOCAL_STATIC_LIBRARIES := cpufeatures \
-				libexpat_static \
-				libsrtp_static \
-				libssl_static \
-				libcrypto_static
+				libexpat_static
 
-LOCAL_SHARED_LIBRARIES:=  $(MY_DYNAMIC_STLLIB)
-LOCAL_LDLIBS := -llog -lz
+ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
+	LOCAL_SHARED_LIBRARIES += liblinssl liblincrypto
+	ifeq ($(BUILD_GPLV3_ZRTP),1)
+	LOCAL_SHARED_LIBRARIES += libzrtpcpp
+	endif
+
+	ifeq ($(BUILD_SRTP),1)
+	LOCAL_SHARED_LIBRARIES += libsrtp
+	endif
+else
+	LOCAL_LDLIBS += -lz
+	#LOCAL_STATIC_LIBRARIES += libz libdl
+	LOCAL_STATIC_LIBRARIES += \
+		libssl-static libcrypto-static
+	ifeq ($(BUILD_GPLV3_ZRTP),1)
+		LOCAL_STATIC_LIBRARIES += libzrtpcpp-static
+	endif
+
+	ifeq ($(BUILD_SRTP),1)
+		LOCAL_STATIC_LIBRARIES += libsrtp-static
+	endif
+endif
+
+LOCAL_LDLIBS += -llog -ldl
 include $(BUILD_SHARED_LIBRARY)
 
 
@@ -264,7 +272,7 @@ include $(BUILD_SHARED_LIBRARY)
 #### VoiceChat Call application
 include $(CLEAR_VARS)
 LOCAL_MODULE := callapp
-LOCAL_CPPFLAGS :=$(MY_JINGLE_CPPFLAGS)
+LOCAL_CPPFLAGS :=$(JINGLE_CPPFLAGS)
 LOCAL_CPP_EXTENSION := .cc
 
 LOCAL_SRC_FILES := \
@@ -280,27 +288,18 @@ LOCAL_SRC_FILES := \
 
 LOCAL_LDLIBS := -llog -lz
 LOCAL_SHARED_LIBRARIES := libjingle libxmpphelp
-include $(BUILD_EXECUTABLE)
-#
-# Built unittest
-ifeq ($(MY_USE_UNITTEST),1)
-include $(LIBJINGLE_PATH)/Unittest.mk
-# Also build self unitest
-include $(LIBJINGLE_PATH)/talk/third_party/gtest/Android.mk
+ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
+	LOCAL_SHARED_LIBRARIES += liblinssl liblincrypto
+	ifeq ($(BUILD_GPLV3_ZRTP),1)
+	LOCAL_SHARED_LIBRARIES += libzrtpcpp
+	endif
+
+	ifeq ($(BUILD_SRTP),1)
+	LOCAL_SHARED_LIBRARIES += libsrtp
+	endif
 endif
-########################################################################
-########################################################################
-# Third party libraries rules
-include $(CLEAR_VARS)
-include $(LIBJINGLE_PATH)/talk/third_party/expat/Android.mk
-include $(LIBJINGLE_PATH)/talk/third_party/srtp/Android.mk
-include $(LIBJINGLE_PATH)/talk/third_party/openssl/Android.mk
-#### Build openssl                                                                     
-###ifeq ($(MY_USE_TLS),1)
-###NDK_PROJECT_PATH := $(JNI_PATH)/libjingle/talk/third_party//sources/
-###include $(JNI_PATH)/libjingle/talk/third_party/openssl/sources/Android.mk
-###NDK_PROJECT_PATH := $(JNI_PATH)
-###endif
+
+include $(BUILD_EXECUTABLE)
 
 ## cpufeatures required by libjingle
 $(call import-module,android/cpufeatures)

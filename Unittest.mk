@@ -1,27 +1,31 @@
 ###############################################
 #### Unittests ################################
 ###############################################
-LOCAL_PATH:= $(call my-dir)
+MK_DIR:=$(call my-dir)
+LOCAL_EXTERNALS:= $(MK_DIR)/..
+LOCAL_PATH:= $(LOCAL_EXTERNALS)/libjingle
+include $(CLEAR_VARS)
+
+include $(MK_DIR)/config.mk
 # Copied from libjingle.csons : NOT MODIFIED
 
 LIBJINGLE_UNITTEST_CFLAGS:= -DLIBJINGLE_UNITTEST \
 			-DEXPAT_RELATIVE_PATH \
 			-DSRTP_RELATIVE_PATH
 
-LIBJINGLE_UNITTEST_CFLAGS += $(MY_JINGLE_CPPFLAGS)
+LIBJINGLE_UNITTEST_CFLAGS += $(LIBJINGLE_CPPFLAGS)
 
 LIBJINGLE_UNITTEST_C_INCLUDES:= \
-		$(LIBJINGLE_PATH)/talk/third_party/gtest/include \
-		$(LIBJINGLE_PATH)/talk/third_party/expat/lib \
-		$(LIBJINGLE_PATH)/talk/third_party/srtp \
-		$(LIBJINGLE_PATH)/talk/third_party/gtest \
-		$(LIBJINGLE_PATH)/talk/third_party/gtest/include
+		$(LIBJINGLE_C_INCLUDE) \
+		$(LOCAL_EXTERNALS)/gtest \
+		$(LOCAL_EXTERNALS)/gtest/include
+
 
 # gunit
 # Copied from libjingle.csons : NOT MODIFIED
 include $(CLEAR_VARS)
 LOCAL_MODULE:= gunit
-LOCAL_SRC_FILES:= talk/third_party/gtest/src/gtest-all.cc
+LOCAL_SRC_FILES:= $(LOCAL_EXTERNALS)/gtest/src/gtest-all.cc
 LOCAL_CFLAGS:= $(LIBJINGLE_UNITTEST_CFLAGS)
 LOCAL_EXPORT_CFLAGS:= $(LOCAL_CFLAGS)
 LOCAL_C_INCLUDES:= $(LIBJINGLE_UNITTEST_C_INCLUDES)
@@ -39,7 +43,13 @@ LOCAL_C_INCLUDES:= $(LIBJINGLE_UNITTEST_C_INCLUDES)
 LOCAL_CPP_EXTENSION:= .cc
 include $(BUILD_STATIC_LIBRARY)
 
-##############
+LIBJINGLE_UNITTEST_SHARED_LIBS:=libjingle
+LIBJINGLE_UNITTEST_STATIC_LIBS:=unittest_main
+
+############################################################################ 
+# Build executable unittest						####
+############################################################################
+
 # base_unittest
 # Copied from libjingle.csons( original name 'base') : MODIFIED
 # del: talk/base/latebindingsymboltable_unittest.cc
@@ -119,7 +129,7 @@ LOCAL_SRC_FILES += \
 		talk/base/versionparsing_unittest.cc \
 		talk/base/virtualsocket_unittest.cc
 
-LOCAL_STATIC_LIBRARIES:=unittest_main
+LOCAL_STATIC_LIBRARIES:=$(LIBJINGLE_UNITTEST_STATIC_LIBS)
 LOCAL_SHARED_LIBRARIES:=libjingle
 LOCAL_CFLAGS:= $(LIBJINGLE_UNITTEST_CFALGS)
 LOCAL_C_INCLUDES:= $(LIBJINGLE_UNITTEST_C_INCLUDES)
@@ -145,8 +155,8 @@ LOCAL_SRC_FILES:= \
                 talk/p2p/client/connectivitychecker_unittest.cc \
                 talk/p2p/client/portallocator_unittest.cc
 
-LOCAL_STATIC_LIBRARIES:=unittest_main
-LOCAL_SHARED_LIBRARIES:=libjingle
+LOCAL_STATIC_LIBRARIES:=$(LIBJINGLE_UNITTEST_STATIC_LIBS)
+LOCAL_SHARED_LIBRARIES:=$(LIBJINGLE_UNITTEST_SHARED_LIBS)
 LOCAL_CFLAGS:= $(LIBJINGLE_UNITTEST_CFALGS)
 LOCAL_C_INCLUDES:= $(LIBJINGLE_UNITTEST_C_INCLUDES)
 LOCAL_CPP_EXTENSION:= .cc
@@ -181,8 +191,8 @@ LOCAL_SRC_FILES:= \
 #REMOVED SRC FILES :
 # talk/session/phone/devicemanager_unittest.cc \
 
-LOCAL_STATIC_LIBRARIES:=unittest_main
-LOCAL_SHARED_LIBRARIES:=libjingle
+LOCAL_STATIC_LIBRARIES:=$(LIBJINGLE_UNITTEST_STATIC_LIBS)
+LOCAL_SHARED_LIBRARIES:=$(LIBJINGLE_UNITTEST_SHARED_LIBS)
 LOCAL_CFLAGS:= $(LIBJINGLE_UNITTEST_CFALGS)
 LOCAL_C_INCLUDES:= $(LIBJINGLE_UNITTEST_C_INCLUDES)
 LOCAL_CPP_EXTENSION:= .cc
@@ -193,8 +203,8 @@ include $(BUILD_EXECUTABLE)
 include $(CLEAR_VARS)
 LOCAL_MODULE:= sound_unittest
 LOCAL_SRC_FILES:= talk/sound/automaticallychosensoundsystem_unittest.cc
-LOCAL_STATIC_LIBRARIES:=unittest_main
-LOCAL_SHARED_LIBRARIES:=libjingle
+LOCAL_STATIC_LIBRARIES:=$(LIBJINGLE_UNITTEST_STATIC_LIBS)
+LOCAL_SHARED_LIBRARIES:=$(LIBJINGLE_UNITTEST_SHARED_LIBS)
 LOCAL_CFLAGS:= $(LIBJINGLE_UNITTEST_CFALGS)
 LOCAL_C_INCLUDES:= $(LIBJINGLE_UNITTEST_C_INCLUDES)
 LOCAL_CPP_EXTENSION:= .cc
@@ -212,8 +222,8 @@ LOCAL_SRC_FILES:= \
 		talk/xmllite/xmlparser_unittest.cc \
 		talk/xmllite/xmlprinter_unittest.cc
 
-LOCAL_STATIC_LIBRARIES:=unittest_main
-LOCAL_SHARED_LIBRARIES:=libjingle
+LOCAL_STATIC_LIBRARIES:=$(LIBJINGLE_UNITTEST_STATIC_LIBS)
+LOCAL_SHARED_LIBRARIES:=$(LIBJINGLE_UNITTEST_SHARED_LIBS)
 LOCAL_CFLAGS:= $(LIBJINGLE_UNITTEST_CFALGS)
 LOCAL_C_INCLUDES:= $(LIBJINGLE_UNITTEST_C_INCLUDES)
 LOCAL_CPP_EXTENSION:= .cc
@@ -237,8 +247,8 @@ LOCAL_SRC_FILES:= \
 		talk/xmpp/xmpplogintask_unittest.cc \
 		talk/xmpp/xmppstanzaparser_unittest.cc
 
-LOCAL_STATIC_LIBRARIES:=unittest_main
-LOCAL_SHARED_LIBRARIES:=libjingle
+LOCAL_STATIC_LIBRARIES:=$(LIBJINGLE_UNITTEST_STATIC_LIBS)
+LOCAL_SHARED_LIBRARIES:=$(LIBJINGLE_UNITTEST_SHARED_LIBS)
 LOCAL_CFLAGS:= $(LIBJINGLE_UNITTEST_CFALGS)
 LOCAL_C_INCLUDES:= $(LIBJINGLE_UNITTEST_C_INCLUDES)
 LOCAL_CPP_EXTENSION:= .cc
