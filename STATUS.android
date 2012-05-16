@@ -23,16 +23,15 @@
    It is appeader that callapp not works due to luck of ifaddrs header in android
    talk/base/network.cc:185: BasicNetworkManager::CreateNetworks
 
+** NEXT Make external git repo
 ** TODO Investigate conwinient way to import linux device headers for android
    'ifaddrs.h' headers required to build network device/address lookup support
-   Off cource it is trivial to copy it from somewhere, but it is better to
-   find out right way to import system/kernel headers.
+   Off cource it is trivial to copy it from somewhere,
+   https://raw.github.com/CyanogenMod/android_libcore/gingerbread/luni/src/main/native/ifaddrs-android.h
+   but it is better to find out right way to import system/kernel headers.
+   
+** TODO Implement mediaengine via mediastreamer2 similar linphone-android
 
-** TODO Investigate webrtc and glue layer in order to implement androidmediaservice
-   androidmediaservice.{h,cc} is a mysterious file, libjingle and webrtc
-   reference it but i can't find it anywhere. WTF?
-   It should not be too hard to implement it
-   resources: csipsimple and webrtc examples
 
 
 
